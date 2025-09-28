@@ -1,5 +1,3 @@
-# composite test ----------------------------------------------------------
-
 # install package ---------------------------------------------------------
 library(mvtnorm)
 library(piqp)
@@ -61,8 +59,7 @@ A_hat = function(X, Y, KK=2) {
 Tw = function(X, Y, KK=2) {
   res = solve_piqp(P=2*A_hat(X, Y, KK), c=rep(0,KK), 
                    A=matrix(rep(1,KK),ncol=KK), b=1,
-                   G=matrix(rep(0,KK*KK),ncol=KK), h=rep(0,KK), x_lb=rep(0,KK)) 
-                   
+                   G=matrix(rep(0,KK*KK),ncol=KK), h=rep(0,KK), x_lb=rep(0,KK))                  
   w_hat = res$x
   re = c(w_hat) %*% T_stat(X, Y, KK)
   return(c(re, w_hat))
@@ -136,7 +133,7 @@ Y = matrix(Y_ZhouEx1(n*d, mu = theta), nrow=n, ncol=d)
 Z = rbind(X, Y)
 ind = 1:(m + n)
 
-# opt 
+# Composite test 
 Tw0 = Tw(X, Y, KK)
 T0.test = Tw0[1]
 w0 = Tw0[-1]
@@ -150,7 +147,6 @@ for (b in 1:R) {
   TR.test[b] = TwR[1]
   wR[, b] = TwR[-1]
 }
-wR = rowMeans(wR)
 p.w = mean(c(T0.test, TR.test) >= T0.test)
 pow.w = 1 * (p.w <= alpha)
 
@@ -205,4 +201,5 @@ band075 = 1/(median(band[band>0])*d^(0.75))^2
 p.Ramdas075 = eummd::mmd(X, Y, beta = band075, kernel = "Gaussian")$pval
 pow.Ramdas075 = 1 * (p.Ramdas075 <= alpha)                                        
                                         
+
 
